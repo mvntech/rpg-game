@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     private float xInput;
     private float jumpForce = 5f;
     private float moveSpeed = 5f;
+    private bool facingRight = true;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -19,6 +21,7 @@ public class Player : MonoBehaviour
         HandleInput();
         HandleMovement();
         HandleAnimation();
+        HandleFlip();
     }
     void HandleInput()
     {
@@ -35,8 +38,20 @@ public class Player : MonoBehaviour
         bool isMoving = rb.linearVelocity.x != 0;
         anim.SetBool("isMoving", isMoving);
     }
+    void HandleFlip()
+    {
+        if (xInput > 0 && !facingRight)
+            Flip();
+        else if (xInput < 0 && facingRight)
+            Flip();
+    }
     void Jump()
     {
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+    }
+    void Flip()
+    {
+        transform.Rotate(0f, 180f, 0f);
+        facingRight = !facingRight;
     }
 }
