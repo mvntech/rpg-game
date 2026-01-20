@@ -13,9 +13,9 @@ public class Player : MonoBehaviour
     private bool facingRight = true;
 
     [Header("Collision Details")]
-    private float groundCheckDistance;
+    [SerializeField] private float groundCheckDistance;
     [SerializeField] private bool isGrounded;
-    private LayerMask groundLayer;
+    [SerializeField] private LayerMask groundLayer;
 
     void Awake()
     {
@@ -42,8 +42,9 @@ public class Player : MonoBehaviour
     }
     void HandleAnimation()
     {
-        bool isMoving = rb.linearVelocity.x != 0;
-        anim.SetBool("isMoving", isMoving);
+        anim.SetBool("isGrounded", isGrounded);
+        anim.SetFloat("xVelocity", rb.linearVelocity.x);
+        anim.SetFloat("yVelocity", rb.linearVelocity.y);
     }
     void HandleFlip()
     {
