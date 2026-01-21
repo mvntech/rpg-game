@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     private float jumpForce = 8f;
     private float moveSpeed = 5f;
     private bool facingRight = true;
+    private bool isAttacking = false;
 
     [Header("Collision Details")]
     [SerializeField] private float groundCheckDistance;
@@ -33,8 +34,11 @@ public class Player : MonoBehaviour
     void HandleInput()
     {
         xInput = Keyboard.current.aKey.isPressed ? -1f : Keyboard.current.dKey.isPressed ? 1f : 0f;
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
-            Jump();
+        if (Keyboard.current.wKey.wasPressedThisFrame)
+            TryToJump();
+
+        if(Keyboard.current.eKey.isPressed)
+            AttemptToAttack();
     }
     void HandleMovement()
     {
@@ -57,7 +61,7 @@ public class Player : MonoBehaviour
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
     }
-    void Jump()
+    void TryToJump()
     {
         if(isGrounded)
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
@@ -66,6 +70,18 @@ public class Player : MonoBehaviour
     {
         transform.Rotate(0f, 180f, 0f);
         facingRight = !facingRight;
+    }
+    void AttemptToAttack()
+    {
+        if (isGrounded && !isAttacking)
+        {
+            isAttacking = true;
+            anim.SetTrigger("attack");
+        }
+        else
+        {
+            isAttacking = false;
+        }
     }
     void OnDrawGizmos()
     {
