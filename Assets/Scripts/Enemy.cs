@@ -14,7 +14,8 @@ public class Enemy : Entity
     protected override void HandleCollision()
     {
         base.HandleCollision();
-        playerDetected = Physics2D.OverlapCircle(attackPoint.position, attackRadius, targetLayer);
+        if (attackPoint != null)
+            playerDetected = Physics2D.OverlapCircle(attackPoint.position, attackRadius, targetLayer);
     }
     protected override void HandleAttack()
     {
@@ -22,6 +23,10 @@ public class Enemy : Entity
         {
             isAttacking = true;
             anim.SetTrigger("attack");
+        }
+        else if(!playerDetected)
+        {
+            isAttacking = false;
         }
     }
 }

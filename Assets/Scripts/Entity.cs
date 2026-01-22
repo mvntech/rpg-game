@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,6 +7,15 @@ public class Entity : MonoBehaviour
 {
     protected Rigidbody2D rb;
     protected Animator anim;
+    protected Collider2D coll;
+    protected SpriteRenderer sr;
+
+    [Header("Health Details")]
+    [SerializeField] protected int maxHealth = 1;
+    [SerializeField] protected int currentHealth;
+    [SerializeField] private Material damageMaterial;
+    [SerializeField] private float damageFeedbackDuration = .2f;
+    private Coroutine damageFeedbackCoroutine;
 
     [Header("Attack Details")]
     [SerializeField] protected float attackRadius;
@@ -29,6 +39,9 @@ public class Entity : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponentInChildren<Animator>();
+        coll = GetComponent<Collider2D>();
+        sr= GetComponentInChildren<SpriteRenderer>();
+        currentHealth = maxHealth;
     }
     protected virtual void Update()
     {
@@ -79,7 +92,34 @@ public class Entity : MonoBehaviour
     }
     private void TakeDamage()
     {
-        throw new NotImplementedException();
+        currentHealth -= 1;
+        if(damageFeedbackCoroutine != null)
+            StopCoroutine(damageFeedbackCoroutine);
+        StartCoroutine(DamageFeedbackCo());
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+    private void PlayDamageFeedback()
+    {
+        if(damageFeedbackCoroutine != null)
+            StopCoroutine(damageFeedbackCoroutine);
+        StartCoroutine(DamageFeedbackCo());
+    }
+    private IEnumerator DamageFeedbackCo()
+    {
+        Material originalMaterial = sr.material;
+        sr.material = damageMaterial;
+        yield return new WaitForSeconds(damageFeedbackDuration);
+        sr.material = originalMaterial;
+    }
+    protected void Die()
+    {
+        anim.enabled = false;
+        coll.enabled = false;
+        rb.gravityScale = 12;
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 15);
     }
     void TryToJump()
     {
