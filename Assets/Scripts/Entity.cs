@@ -17,7 +17,7 @@ public class Entity : MonoBehaviour
     private float jumpForce = 15f;
     [SerializeField] protected float moveSpeed = 5f;
     private bool facingRight = true;
-    private bool isAttacking = false;
+    protected bool isAttacking = false;
     protected int facingDir = 1;
 
     [Header("Collision Details")]
@@ -45,7 +45,7 @@ public class Entity : MonoBehaviour
             TryToJump();
 
         if(Keyboard.current.eKey.isPressed)
-            AttemptToAttack();
+            HandleAttack();
     }
     protected virtual void HandleMovement(float direction)
     {
@@ -92,7 +92,7 @@ public class Entity : MonoBehaviour
         facingRight = !facingRight;
         facingDir *= -1;
     }
-    protected void AttemptToAttack()
+    protected virtual void HandleAttack()
     {
         if (isGrounded && !isAttacking)
         {
